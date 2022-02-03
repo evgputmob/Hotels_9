@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'models/hotel.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 enum ViewType { list, grid }
 
@@ -32,17 +34,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<Hotel> _hotels = [
-    Hotel(uuid: '1', name: 'Hotel 1', poster: 'b&b_la_fontaine_1.jpg'),
-    Hotel(uuid: '2', name: 'Hotel 2', poster: 'flora_chiado_apartments_9.jpg'),
-    Hotel(uuid: '3', name: 'Hotel 3', poster: 'disney_dreams_3.jpg'),
-    Hotel(uuid: '4', name: 'Hotel 4', poster: 'disney_dreams_4.jpg'),
-    Hotel(uuid: '5', name: 'Hotel 5', poster: 'disney_dreams_5.jpg'),
-    Hotel(uuid: '6', name: 'Hotel 6', poster: 'disney_dreams_6.jpg'),
-    Hotel(uuid: '7', name: 'Hotel 7', poster: 'disney_dreams_2.jpg'),
-  ];
-
-  ViewType _viewType = ViewType.grid;
+  List<Hotel> _hotels = [];
+  bool _isLoading = false;
+  bool _isError = false;
+  ViewType _viewType = ViewType.list;
 
   //----------------------------
   Widget _buildHotelsListView() {
@@ -159,6 +154,34 @@ class _MyHomePageState extends State<MyHomePage> {
   }
   //----------------------------
 
+  void getData() async {
+    setState(() {
+      _isLoading = true;
+      _isError = false;
+    });
+    try {
+      final response = await http.get(Uri.parse(
+          'https://run.mocky.io/v3/ac888dc5-d193-4700-b12c-abb43e289301'));
+      var hotelsData = json.decode(response.body);
+      _hotels =
+          hotelsData.map<Hotel>((hotel) => Hotel.fromJson(hotel)).toList();
+      setState(() {
+        _isLoading = false;
+      });
+    } catch (error) {
+      setState(() {
+        _isLoading = false;
+        _isError = true;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -168,6 +191,7 @@ class _MyHomePageState extends State<MyHomePage> {
           IconButton(
             icon: const Icon(Icons.list),
             onPressed: () {
+              if (_isLoading || _isError) return;
               if (_viewType == ViewType.list) return;
               setState(() {
                 _viewType = ViewType.list;
@@ -177,6 +201,7 @@ class _MyHomePageState extends State<MyHomePage> {
           IconButton(
             icon: const Icon(Icons.apps),
             onPressed: () {
+              if (_isLoading || _isError) return;
               if (_viewType == ViewType.grid) return;
               setState(() {
                 _viewType = ViewType.grid;
@@ -187,9 +212,14 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       body: SafeArea(
-          child: (_viewType == ViewType.list)
-              ? _buildHotelsListView()
-              : _buildHotelsGridView()),
+        child: _isLoading
+            ? const Center(child: (CircularProgressIndicator()))
+            : (_isError
+                ? (const Center(child: Text('Loading error')))
+                : ((_viewType == ViewType.list)
+                    ? _buildHotelsListView()
+                    : _buildHotelsGridView())),
+      ),
     );
   }
 }
