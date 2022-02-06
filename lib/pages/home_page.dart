@@ -79,66 +79,73 @@ class _HomePageState extends State<HomePage> {
   //----------------------------
 
   Widget _buildHotelsGridView() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(14, 17, 14, 0),
-      child: GridView.builder(
-        gridDelegate:
-            const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-        itemCount: _hotels.length,
-        itemBuilder: (BuildContext context, int index) {
-          return Card(
-            clipBehavior: Clip.antiAlias,
-            elevation: 3,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0)),
-            margin: (index % 2 == 0)
-                ? const EdgeInsets.fromLTRB(0, 0, 7, 18)
-                : const EdgeInsets.fromLTRB(7, 0, 0, 18),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(
-                  child: Image(
-                      image:
-                          AssetImage('assets/images/${_hotels[index].poster}'),
-                      fit: BoxFit.cover),
-                ),
-                const SizedBox(height: 7),
-                SizedBox(
-                  height: 42,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    child: Text(
-                      _hotels[index].name,
-                      maxLines: 2,
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 14),
-                    ),
+    EdgeInsets getMargins(int index) {
+      if (index % 2 == 0) {
+        return (index == _hotels.length - 2)
+            ? const EdgeInsets.fromLTRB(14, 17, 7, 17)
+            : const EdgeInsets.fromLTRB(14, 17, 7, 0);
+      } else {
+        return (index == _hotels.length - 1)
+            ? const EdgeInsets.fromLTRB(7, 17, 14, 17)
+            : const EdgeInsets.fromLTRB(7, 17, 14, 0);
+      }
+    }
+
+    return GridView.builder(
+      gridDelegate:
+          const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+      itemCount: _hotels.length,
+      itemBuilder: (BuildContext context, int index) {
+        return Card(
+          clipBehavior: Clip.antiAlias,
+          elevation: 3,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          margin: getMargins(index),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: Image(
+                    image: AssetImage('assets/images/${_hotels[index].poster}'),
+                    fit: BoxFit.cover),
+              ),
+              const SizedBox(height: 7),
+              SizedBox(
+                height: 42,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: Text(
+                    _hotels[index].name,
+                    maxLines: 2,
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 14),
                   ),
                 ),
-                Material(
-                  color: Theme.of(context).primaryColor,
-                  child: InkWell(
-                    onTap: () {
-                      context.push('/hotel/${_hotels[index].uuid}');
-                    },
-                    child: const SizedBox(
-                      height: 34,
-                      child: Center(
-                        child: Text(
-                          'Подробнее',
-                          style: TextStyle(color: Colors.white),
-                        ),
+              ),
+              Material(
+                color: Theme.of(context).primaryColor,
+                child: InkWell(
+                  onTap: () {
+                    context.push('/hotel/${_hotels[index].uuid}');
+                  },
+                  child: const SizedBox(
+                    height: 34,
+                    child: Center(
+                      child: Text(
+                        'Подробнее',
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
                   ),
                 ),
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
   //----------------------------
@@ -205,9 +212,13 @@ class _HomePageState extends State<HomePage> {
             ? const Center(child: (CircularProgressIndicator()))
             : (_isError
                 ? (const Center(child: Text('Loading error')))
-                : ((_viewType == ViewType.list)
-                    ? _buildHotelsListView()
-                    : _buildHotelsGridView())),
+                : IndexedStack(
+                    index: (_viewType == ViewType.list) ? 0 : 1,
+                    children: [
+                      _buildHotelsListView(),
+                      _buildHotelsGridView(),
+                    ],
+                  )),
       ),
     );
   }

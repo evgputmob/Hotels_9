@@ -38,8 +38,7 @@ class _HotelPageState extends State<HotelPage> {
         });
         return;
       }
-      var hotelData = json.decode(response.body);
-      _hotelDetails = HotelDetails.fromJson(hotelData);
+      _hotelDetails = HotelDetails.fromJson(json.decode(response.body));
       setState(() {
         _isLoading = false;
       });
@@ -104,37 +103,39 @@ class _HotelPageState extends State<HotelPage> {
           padding: EdgeInsets.fromLTRB(12, 16, 0, 12),
           child: Text('Сервисы', style: TextStyle(fontSize: 24)),
         ),
-        SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Платные', style: TextStyle(fontSize: 20)),
-                    const SizedBox(height: 10),
-                    ..._hotelDetails.services.paid
-                        .map((item) => Text(item))
-                        .toList(),
-                  ],
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Платные', style: TextStyle(fontSize: 20)),
+                      const SizedBox(height: 10),
+                      ..._hotelDetails.services.paid
+                          .map((item) => Text(item))
+                          .toList(),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Бесплатно', style: TextStyle(fontSize: 20)),
-                    const SizedBox(height: 10),
-                    ..._hotelDetails.services.free
-                        .map((item) => Text(item))
-                        .toList(),
-                  ],
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Бесплатно', style: TextStyle(fontSize: 20)),
+                      const SizedBox(height: 10),
+                      ..._hotelDetails.services.free
+                          .map((item) => Text(item))
+                          .toList(),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         )
       ],
