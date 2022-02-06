@@ -106,12 +106,15 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(height: 7),
                 SizedBox(
                   height: 42,
-                  child: Text(
-                    _hotels[index].name,
-                    maxLines: 2,
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 14),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    child: Text(
+                      _hotels[index].name,
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 14),
+                    ),
                   ),
                 ),
                 Material(
