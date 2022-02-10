@@ -7,21 +7,6 @@ void main() {
   runApp(MyApp());
 }
 
-// class MyApp extends StatelessWidget {
-//   const MyApp({Key? key}) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Hotels',
-//       theme: ThemeData(
-//         primarySwatch: Colors.blue,
-//       ),
-//       home: const HomePage(title: 'Hotels Home Page'),
-//     );
-//   }
-// }
-
 class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
 
